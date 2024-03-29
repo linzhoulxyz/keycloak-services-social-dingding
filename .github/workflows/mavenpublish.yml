@@ -24,13 +24,50 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          git fetch --tags
+          tag_commit=$(git rev-list --tags --max-count=1)
+          
+          if [ -z "$tag_commit" ]; then
+            latest_tag="0.0.0"
+          else
+            latest_tag=$(git describe --tags "$tag_commit")
+          fi
+          
+          echo "::set-output name=latest_tag::$latest_tag"
+
+
+      - name: Get current version from pom.xml
+        id: get_current_version
+        run: |
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "::set-output name=current_version::$current_version"
+
+
+      - name: Check if pom.xml version has changed
+        id: check_version
+        run: |
+          if [ "${{ steps.get_current_version.outputs.current_version }}" != "${{ steps.get_latest_tag.outputs.latest_tag }}" ]; then
+            echo "Version changed"
+            echo "::set-output name=version_changed::true"
+          else
+            echo "Version not changed"
+            echo "::set-output name=version_changed::false"
+          fi
+
       - name: Test
+        if: steps.check_version.outputs.version_changed == 'true'
         run: mvn clean test
 
       - name: Build with Maven
+        if: steps.check_version.outputs.version_changed == 'true'
         run: mvn -B package --file pom.xml
 
       - name: Publish to GitHub Packages Apache Maven
+        if: steps.check_version.outputs.version_changed == 'true'
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
