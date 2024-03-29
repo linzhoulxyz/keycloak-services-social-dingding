@@ -5,7 +5,7 @@
     <groupId>org.keycloak</groupId>
     <artifactId>keycloak-services-social-dingding</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <name>Keycloak Services Social DingDing</name>
     <description>Keycloak Services Social DingDing</description>
@@ -79,8 +79,20 @@
             </plugins>
         </pluginManagement>
     </build>
-
+    <repositories>
+        <repository>
+            <id>repository.groupdocs.com</id>
+            <name>GroupDocs Repository</name>
+            <url>https://releases.groupdocs.com/java/repo/</url>
+        </repository>
+    </repositories>
     <dependencies>
+
+        <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-conversion</artifactId>
+            <version>23.11.1</version>
+        </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
