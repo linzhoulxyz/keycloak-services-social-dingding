@@ -34,7 +34,12 @@ jobs:
         id: get_latest_tag
         run: |
           git fetch --tags
-          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
+          
+          if [ -z "$latest_tag" ]; then
+            latest_tag="0.0.0"
+          fi
+          
           echo "::set-output name=latest_tag::$latest_tag"
 
       - name: Get current version from pom.xml
