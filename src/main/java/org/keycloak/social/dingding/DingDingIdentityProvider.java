@@ -52,6 +52,7 @@ public class DingDingIdentityProvider
 
     public static final String OAUTH2_PARAMETER_CLIENT_ID = "client_id";
     public static final String OAUTH2_PARAMETER_RESPONSE_TYPE = "response_type";
+    public static final String OAUTH2_PARAMETER_PROMPT = "prompt";
 
     public static final String PROFILE_MOBILE = "mobile";
 
@@ -231,7 +232,8 @@ public class DingDingIdentityProvider
                 .queryParam(OAUTH2_PARAMETER_REDIRECT_URI, request.getRedirectUri())
                 .queryParam(OAUTH2_PARAMETER_RESPONSE_TYPE, DEFAULT_RESPONSE_TYPE)
                 .queryParam(OAUTH2_PARAMETER_SCOPE, getConfig().getDefaultScope())
-                .queryParam(OAUTH2_PARAMETER_STATE, request.getState().getEncoded());
+                .queryParam(OAUTH2_PARAMETER_STATE, request.getState().getEncoded())
+                .queryParam(OAUTH2_PARAMETER_PROMPT, "consent");//新版必填 弹出授权框
 
 
         logger.info("授权链接是：" + uriBuilder.build().toString());
