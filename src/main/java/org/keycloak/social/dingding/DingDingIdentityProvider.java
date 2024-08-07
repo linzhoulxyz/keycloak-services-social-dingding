@@ -160,20 +160,48 @@ public class DingDingIdentityProvider
     protected BrokeredIdentityContext extractIdentityFromProfile(
             EventBuilder event, JsonNode profile) {
         logger.info(profile.toString());
-        BrokeredIdentityContext identity =
-                new BrokeredIdentityContext((getJsonProperty(profile, "unionId")));
 
-        identity.setUsername(getJsonProperty(profile, "nick").toLowerCase());
-        identity.setBrokerUserId(getJsonProperty(profile, "unionId").toLowerCase());
-        identity.setModelUsername(getJsonProperty(profile, "nick").toLowerCase());
+        String unionId = getJsonProperty(profile, "unionId").toLowerCase();
+        String openId = getJsonProperty(profile, "openId").toLowerCase();
+        String nick = getJsonProperty(profile, "nick").toLowerCase();
         String email = getJsonProperty(profile, "email");
-        if (email != null) {
-            identity.setFirstName(email.split("@")[0].toLowerCase());
-            identity.setEmail(email);
+        String mobile = getJsonProperty(profile, "mobile");
+        String uname = nick;
+        String firstName = nick;
+        String lastName = nick;
+
+        if (!nick.isEmpty()) {
+            lastName = nick.substring(0, 1);
+            firstName = nick.substring(1);
         }
-        identity.setLastName(getJsonProperty(profile, "nick"));
+
+        // convert nick from chinese to pinyin
+        uname = PinyinConverter.convertToPinyin(nick);
+        if (email == null) {
+            email = uname + "@dcx.com";
+        }
+
+        logger.info("unionId: " + unionId);
+        logger.info("openId: " + openId);
+        logger.info("nick: " + nick);
+        logger.info("email: " + email);
+        logger.info("mobile: " + mobile);
+        logger.info("uname: " + uname);
+        logger.info("firstName: " + firstName);
+        logger.info("lastName: " + lastName);
+
+        BrokeredIdentityContext identity =
+                new BrokeredIdentityContext(unionId);
+
+        identity.setUsername(uname);
+        identity.setBrokerUserId(unionId);
+        identity.setModelUsername(uname);
+        identity.setEmail(email);
+        identity.setFirstName(firstName);
+        identity.setLastName(lastName);
+
         // 手机号码，第三方仅通讯录应用可获取
-        identity.setUserAttribute(PROFILE_MOBILE, getJsonProperty(profile, "mobile"));
+        identity.setUserAttribute(PROFILE_MOBILE, mobile);
 
         identity.setIdpConfig(getConfig());
         identity.setIdp(this);

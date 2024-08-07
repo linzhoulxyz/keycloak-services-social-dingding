@@ -5,7 +5,7 @@
     <groupId>org.keycloak</groupId>
     <artifactId>keycloak-services-social-dingding</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <name>Keycloak Services Social DingDing</name>
     <description>Keycloak Services Social DingDing</description>
@@ -45,11 +45,6 @@
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
                         </descriptorRefs>
-                        <archive>
-                            <manifest>
-                                <mainClass/>
-                            </manifest>
-                        </archive>
                     </configuration>
                     <executions>
                         <execution>
@@ -81,9 +76,9 @@
     </build>
     <repositories>
         <repository>
-            <id>repository.groupdocs.com</id>
-            <name>GroupDocs Repository</name>
-            <url>https://releases.groupdocs.com/java/repo/</url>
+            <id>aliyunmaven</id>
+            <name>阿里云公共仓库</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
         </repository>
     </repositories>
     <dependencies>
