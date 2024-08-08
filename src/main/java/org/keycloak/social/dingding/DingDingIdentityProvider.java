@@ -88,30 +88,21 @@ public class DingDingIdentityProvider
     }
 
     private String getAccessToken(String authCode) {
-        logger.infov("Getting Access token by ", authCode);
+        logger.infov("Getting Access token by {0}", authCode);
         try {
-            String token = getCache().get(ACCESS_TOKEN_CACHE_KEY);
-            if (token == null) {
-                JsonNode j = renewAccessToken(authCode);
+            String token;
+            JsonNode j = renewAccessToken(authCode);
+            if (j == null) {
+                j = renewAccessToken(authCode);
                 if (j == null) {
-                    j = renewAccessToken(authCode);
-                    if (j == null) {
-                        throw new Exception("renew access token error");
-                    }
-                    logger.info("retry in renew access token " + j);
+                    throw new Exception("renew access token error");
                 }
-                logger.infov("Access token is {0}", j.toString());
-                token = getJsonProperty(j, "accessToken");
-                logger.infov("Access token is {0}", token);
-                logger.infov("expires_in is {0}", getJsonProperty(j, "expireIn"));
-                try {
-                    long timeout = Integer.parseInt(getJsonProperty(j, "expireIn"));
-                    getCache().put(ACCESS_TOKEN_CACHE_KEY, token, timeout, TimeUnit.SECONDS);
-                } catch (Exception ex) {
-                    logger.error(ex);
-                    getCache().put(ACCESS_TOKEN_CACHE_KEY, token, 7200, TimeUnit.SECONDS);
-                }
+                logger.info("retry in renew access token " + j);
             }
+            logger.infov("Access token is {0}", j.toString());
+            token = getJsonProperty(j, "accessToken");
+            logger.infov("Access token is {0}", token);
+            logger.infov("expires_in is {0}", getJsonProperty(j, "expireIn"));
             return token;
         } catch (Exception e) {
             logger.error(e);
